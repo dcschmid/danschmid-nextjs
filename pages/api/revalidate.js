@@ -2,18 +2,10 @@ import directus from "../../lib/directus";
 
 const handler = async (req, res) => {
   const { collection } = req.body;
-  const headers = req.headers;
 
-  if (!headers["x-webhook-secret"]) {
-    return res.status(403).send("Forbidden");
-  }
-
-  const receivedSecret = headers["x-webhook-secret"];
-
-  const secret = process.env.REVALIDATE_SECRET;
-
-  if (receivedSecret !== secret) {
-    return res.status(403).send("Forbidden");
+  // Check for secret to confirm this is a valid request
+  if (req.query.secret !== process.env.REVALIDATE_SECRET) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 
   if (collection === "Blog") {
@@ -25,7 +17,7 @@ const handler = async (req, res) => {
         .readOne(key, { fields: ["slug"] });
 
       await res.revalidate(`/${directusRes.slug}`);
-      await res.revalidate("/");
+      return res.json({ revalidated: true });
     }
   }
 
