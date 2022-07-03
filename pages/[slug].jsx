@@ -26,6 +26,7 @@ export const getStaticProps = async ({ params }) => {
         content: await serialize(res.data[0].content),
       },
     },
+    revalidate: 60,
   };
 };
 
@@ -42,7 +43,6 @@ export const getStaticPaths = async () => {
       },
     })),
     fallback: false,
-    revalidate: 60,
   };
 };
 
