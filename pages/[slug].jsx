@@ -42,6 +42,7 @@ export const getStaticPaths = async () => {
       },
     })),
     fallback: false,
+    revalidate: 60,
   };
 };
 
